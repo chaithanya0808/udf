@@ -1,6 +1,19 @@
 You can avoid repeating the code by creating a function to handle the common part of appending to jsonb_dict and jsonb_dict_array. Here's how you can modify the code:
 
 def add_to_jsonb_dict(json_dict, db_json_field, fcem_attribute, udf_attribute):
+     """
+    Adds a tuple of FCeM (First-Class entity modeling) attribute and UDF (User Defined Function) 
+    attribute to a JSONB dictionary.
+
+    Parameters:
+    - json_dict (dict): The JSONB dictionary to which the attributes will be added.
+    - fcem_db_json_field (str): The FCeM database JSON field key.
+    - fcem_attribute (str): The FCeM attribute associated with the UDF attribute.
+    - udf_attribute (str): The User Defined Function attribute.
+
+    Returns:
+    None
+    """
     json_dict.setdefault(db_json_field, []).append(
         (
             fcem_attribute,
@@ -26,6 +39,17 @@ To reduce duplicate code, you can combine the logic for creating the struct colu
 
 
 def create_struct_columns(col_list):
+    """
+    Creates a list of StructType columns based on the provided column lists.
+
+    Parameters:
+    - col_list (dict): A dictionary where keys are alias columns and values are lists of tuples 
+                      representing column elements.
+
+    Returns:
+    list: A list of StructType columns, each element being a StructType column created from 
+          the corresponding list of tuples.
+    """
     return [
         F.struct(
             *[
@@ -49,6 +73,16 @@ udf_pivot_model = udf_pivot.select(
 To reduce duplicate code, you can define a function to generate the aggregation expressions for both min_by and collect_list. Here's how you can modify the code:
 
 def generate_aggregations(columns, agg_func):
+    """
+    Generates aggregation expressions for the specified columns based on the column type.
+
+    Parameters:
+    - columns (list): A list of column names to aggregate.
+    - column_type (str): The type of the columns, either "jsonb_array" or any other type.
+
+    Returns:
+    list: A list of aggregation expressions based on the column type.
+    """
     return [
         agg_func(col_name, "UDF_ROW").alias(col_name)
         for col_name in columns
