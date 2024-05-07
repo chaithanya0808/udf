@@ -97,3 +97,38 @@ udf_pivot_model.groupBy("CASE_RK", "RECORD_START_TS").agg(
 
 
 
+
+# datatype handling
+
+from pyspark.sql.types import DataType
+
+def convert_to_datatype(df, columns):
+    """
+    Convert specified columns in a DataFrame to the specified datatype.
+
+    Parameters:
+    - df (DataFrame): The input DataFrame.
+    - columns (dict): A dictionary where keys are column names and values are the desired datatype 
+                      (DataType objects) for each column.
+
+    Returns:
+    DataFrame: A new DataFrame with specified columns converted to the desired datatype.
+    """
+    for column, data_type in columns.items():
+        df = df.withColumn(column, col(column).cast(data_type))
+    return df
+
+# Example usage:
+# Assuming `df` is your DataFrame and `columns_to_convert` is a dictionary of column names and desired datatypes
+columns_to_convert = {
+    "column1": IntegerType(),
+    "column2": IntegerType(),
+    "column3": LongType(),
+    "column4": LongType()
+}
+
+df = convert_to_datatype(df, columns_to_convert)
+
+
+
+
